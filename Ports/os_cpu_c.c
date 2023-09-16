@@ -3,6 +3,13 @@
 
 #include "main.h"
 
+
+/* 
+SystickInterupt计数器
+在SystickIrq 陷入100次/s时，计数器可计数497天
+*/
+INT32U _count_systick = 0;
+
 /**
  * @brief Set a memory for BASEPRI Value Stored when Context Switch is performing
 */
@@ -54,6 +61,7 @@ OS_STK* OSTaskStkInit(void (*task)(void* pd),void *pdata,OS_STK* ptos,INT16U opt
 void OSTickISR(void)
 {
     OSIntEnter();
+    ++_count_systick;
     OSTimeTick();
     OSIntExit();
 }
