@@ -19,6 +19,7 @@ OS_STK* OSTaskStkInit(void (*task)(void* pd),void *pdata,OS_STK* ptos,INT16U opt
     /*****************************************************************/
     OS_STK *p_stk = ptos;
     p_stk = (OS_STK *)((uint32_t)p_stk & 0xFFFFFFF8);
+    --p_stk;
     *p_stk = 0x01000000;        //xPSR
     *(--p_stk)=task;      //PC
     *(--p_stk)=OS_TaskReturn;      //LR
