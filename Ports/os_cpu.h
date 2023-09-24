@@ -27,9 +27,13 @@ typedef INT32U OS_CPU_SR;   /* Define size of CPU status register */
 #define CRITICAL_INT_MASK_PRIO 1
 #define INLINE_INT_MASK_PRIO "#1"
 
+#ifdef __cplusplus
 extern"C" {
+#endif
 extern INT32U _count_systick;
+#ifdef __cplusplus
 }
+#endif
 
 INT32U get_basepri();
 
@@ -44,7 +48,9 @@ void OSTickISR(void);
 *                             Processor Specifics
 *********************************************************************************
 */
-#define  OS_CRITICAL_METHOD   3                                             
+#define  OS_CRITICAL_METHOD   3     
+
+#define OS_CPU_ARM_FP_EN    1u
   
 #if      OS_CRITICAL_METHOD == 1
 #define  OS_ENTER_CRITICAL()  \
