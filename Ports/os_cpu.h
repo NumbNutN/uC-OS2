@@ -27,7 +27,9 @@ typedef INT32U OS_CPU_SR;   /* Define size of CPU status register */
 #define CRITICAL_INT_MASK_PRIO 1
 #define INLINE_INT_MASK_PRIO "#1"
 
+extern"C" {
 extern INT32U _count_systick;
+}
 
 INT32U get_basepri();
 

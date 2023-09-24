@@ -8,7 +8,10 @@
 SystickInterupt计数器
 在SystickIrq 陷入100次/s时，计数器可计数497天
 */
+extern "C"{
 INT32U _count_systick = 0;
+}
+
 
 /**
  * @brief Set a memory for BASEPRI Value Stored when Context Switch is performing
@@ -28,13 +31,13 @@ OS_STK* OSTaskStkInit(void (*task)(void* pd),void *pdata,OS_STK* ptos,INT16U opt
     p_stk = (OS_STK *)((uint32_t)p_stk & 0xFFFFFFF8);
     --p_stk;
     *p_stk = 0x01000000;        //xPSR
-    *(--p_stk)=task;      //PC
-    *(--p_stk)=OS_TaskReturn;      //LR
+    *(--p_stk)=(OS_STK)task;      //PC
+    *(--p_stk)=(OS_STK)OS_TaskReturn;      //LR
     *(--p_stk)=0x0;      //R12
     *(--p_stk)=0x0;      //R3
     *(--p_stk)=0x0;      //R2
     *(--p_stk)=0x0;      //R1
-    *(--p_stk)=pdata;      //R0
+    *(--p_stk)=(OS_STK)pdata;      //R0
     /******************************************************************/
     /*      The registers store by software                          */
     /*      Probably should follow the sequence from high index to low ones*/

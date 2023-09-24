@@ -1453,7 +1453,7 @@ void          App_TimeTickHook        (void);
 *********************************************************************************************************
 */
 
-#if 0
+#if 1
 void          OSStartHighRdy          (void);
 void          OSIntCtxSw              (void);
 void          OSCtxSw                 (void);
