@@ -107,9 +107,6 @@ void          OSInitHookEnd           (void)
 {
     //配置 PENDSV优先级
     (SCB->SHP)[10] = 0xE0;
-
-    //配置 BASEPRI初始值
-    //set_basepri(0x0 << 4);
 }
 
 void          OSTaskCreateHook        (OS_TCB          *ptcb)
@@ -139,7 +136,7 @@ void          OSTaskStatHook          (void)
 #if OS_TASK_SW_HOOK_EN > 0u
 void          OSTaskSwHook            (void)
 {
-
+    OS_TRACE_TASK_SWITCHED_IN(OSTCBHighRdy);
 }
 #endif
 
