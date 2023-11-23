@@ -1,6 +1,6 @@
 .syntax unified
 .cpu cortex-m4
-.fpu softvfp
+.fpu fpv4-sp-d16
 .thumb
 .section .text.os_cpu_a,"x"
 
@@ -33,18 +33,30 @@ OSStartHighRdy:
     //Get High Ready Task's StackPointer
     LDR R0,=OSTCBHighRdy
     LDR R0,[R0]
+    //Get the stack top pointer
     LDR R1,[R0]
+    /* first load register s16-s31 */
+    VLDMIA R1!,{S16-S31}
+    /* second load register r4-r11 */
     LDMFD R1!,{R4-R11}
     //Skip the EXC_RETURN
     LDMFD R1!,{R0}
     
-    STMFD SP!,{R4}
+    /* R4 for SP and R5 for FPSCR */
+    STMFD SP!,{R4-R5}
     MOV R4,R1
     LDMFD R4!,{R0-R3,R12,LR}
     //PC in R2 && xPSR in R3
     LDMFD R4!,{R2,R3}
+    /* finally load register s0-s15 and fpscr */
+    VLDMIA R4!,{S0-S15}
+    LDR R5,[R4],#4
+    VMSR FPSCR,R5
+    /* skip odd address */
+    SUB R4,R4,#4
+
     MOV R1,R4
-    LDMFD SP!,{R4}
+    LDMFD SP!,{R4-R5}
     //MSR CPSR,R3       Auctually We could not do this and it makes no sense
     //set the new PSP
     MSR PSP,R1
@@ -87,6 +99,8 @@ PendSV_Handler:
     //SUB R0,R0,#0x20
     //Save the rest registers ,also included EXC_RETURN
     STMFD R0!,{R4-R11,LR}
+    /* at last save registers S16-S31 */
+    VSTMDB R0!,{S16-S31}
     //Save the new tasks stack pointer to current task TCB
     LDR R1,=OSTCBCur
     LDR R1,[R1]
@@ -110,7 +124,9 @@ PendSV_Handler:
     LDR R0,=OSTCBCur
     LDR R0,[R0]
     LDR R0,[R0]
-    //Restore the registers,this will cause the resuming of registers R1-R3,LR,PC
+    /* Restore registers S16-S31 */
+    VLDMIA R0!,{S16-S31}
+    //Restore the registers R4-R11
     LDMFD R0!,{R4-R11,LR}
     MSR PSP,R0
 
